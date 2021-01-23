@@ -26,4 +26,6 @@ async def on_message(message):
     await interpret(message, db_connection)
 
 
-client.run('ODAxMzc5MTU0MjM4NzY3MTM0.YAf0fw.0T8TmzDy3S66McaE0N7gaPTNDa8')
+with open('token.txt', 'r') as file:
+    token = file.read().replace('\n', '')
+    client.run(token)
