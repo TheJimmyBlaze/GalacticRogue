@@ -1,5 +1,5 @@
 class TransactionCommandInterface:
-    async def call(self, message, state):
+    async def call(self, message, state, transactor):
         pass
 
 class Transaction:

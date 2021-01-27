@@ -6,8 +6,9 @@ from command.transactor import Transactor
 async def create_character(message, connection, transactor):
     await prompt_race(message, connection, transactor)
 
-def commit_character(race_id):
+def commit_character(message, race_id, transactor):
     print('selected race: {}'.format(race_id))
+    transactor.clear_transaction(message.author)
 
 async def prompt_race(message, connection, transactor):
     races = connection.get_query("SELECT display_name, description FROM race")
@@ -31,13 +32,13 @@ class RaceTransactionState:
 
 class RaceTransactionCommand(TransactionCommandInterface):
 
-    def select_race(self, chosen_race, races):
+    def select_race(self, message, chosen_race, races, transactor):
         for race in races:
             if race[1].lower() == chosen_race:
-                commit_character(race[0]) 
+                commit_character(message, race[0], transactor) 
                 return
 
-    async def call(self, message, state):
+    async def call(self, message, state, transactor):
         chosen_race = message.content
         races = state.connection.get_query("SELECT natural_id, display_name FROM race")
-        self.select_race(chosen_race, races)
+        self.select_race(message, chosen_race, races, transactor)

@@ -13,7 +13,7 @@ def clean(raw):
 async def interpret(message, connection, transactor):
     transaction = transactor.find_transaction(message.author)
     if transaction is not None:
-        await transaction.function.call(message, transaction.state)
+        await transaction.function.call(message, transaction.state, transactor)
     else:
         raw = message.content
         if raw.startswith(command_prefix):
