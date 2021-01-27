@@ -30,7 +30,7 @@ INSERT INTO race (
 SELECT
     "race_twilek",
     "Twilek",
-    "A tall near-human species whose most striking feature was a pair of long appendages protruding from their skulls, called lekku."
+    "A tall near-human species whose most striking feature is a pair of long appendages protruding from their skulls, called lekku."
 WHERE NOT EXISTS(
     SELECT 1 FROM race WHERE natural_id = "race_twilek"
 );

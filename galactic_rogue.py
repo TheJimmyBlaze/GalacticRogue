@@ -4,9 +4,12 @@ import sqlite3
 from sqlite3 import Error
 from data.database import create_connection 
 from command.interpreter import interpret
+from command.transactor import Transactor
 
 client = discord.Client()
 db_connection = None
+
+transactor = Transactor()
 
 @client.event
 async def on_ready():
@@ -23,7 +26,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    await interpret(message, db_connection)
+    await interpret(message, db_connection, transactor)
 
 
 with open('token.txt', 'r') as file:
