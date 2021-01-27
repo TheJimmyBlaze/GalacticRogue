@@ -28,7 +28,6 @@ async def on_ready():
 async def on_message(message):
     await interpret(message, db_connection, transactor)
 
-
 with open('token.txt', 'r') as file:
     token = file.read().replace('\n', '')
     client.run(token)
