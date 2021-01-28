@@ -1,7 +1,4 @@
-import discord
 from module.character.commands import handle_character
-from command.transactor import Transactor
-from command.transactor import Transaction
 
 command_prefix = '.'
 
@@ -13,7 +10,7 @@ def clean(raw):
 async def interpret(message, connection, transactor):
     transaction = transactor.find_transaction(message.author)
     if transaction is not None:
-        await transaction.function.call(message, transaction.state, transactor)
+        await transaction.function.call(message, transaction.state)
     else:
         raw = message.content
         if raw.startswith(command_prefix):

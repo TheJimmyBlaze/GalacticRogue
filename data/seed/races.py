@@ -1,7 +1,3 @@
-import sqlite3
-from sqlite3 import Error
-from data.connection import DbConnection
-
 def create_races(connection):
     connection.execute_query(create_human_race)
     connection.execute_query(create_twilek_race)

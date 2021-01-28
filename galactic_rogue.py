@@ -1,7 +1,5 @@
 import sys
 import discord
-import sqlite3
-from sqlite3 import Error
 from data.database import create_connection 
 from command.interpreter import interpret
 from command.transactor import Transactor

@@ -1,7 +1,4 @@
-import discord
-from command.transactor import TransactionCommandInterface
 from command.transactor import Transaction
-from command.transactor import Transactor
 
 async def create_character(message, connection, transactor):
     await prompt_race(message, connection, transactor)
@@ -19,26 +16,23 @@ async def prompt_race(message, connection, transactor):
     
     prompt = "> Which race are you?\n{}".format(race_list)
 
-    state = RaceTransactionState(connection)
+    state = RaceTransactionState(connection, transactor)
     transaction = Transaction(RaceTransactionCommand(), state)
     transactor.add_transaction(message.author, transaction)
 
     await message.channel.send(prompt)
 
 class RaceTransactionState:
-    
-    def __init__(self, connection):
+    def __init__(self, connection, transactor):
         self.connection = connection
+        self.transactor = transactor
 
-class RaceTransactionCommand(TransactionCommandInterface):
-
-    def select_race(self, message, chosen_race, races, transactor):
-        for race in races:
-            if race[1].lower() == chosen_race:
-                commit_character(message, race[0], transactor) 
-                return
-
-    async def call(self, message, state, transactor):
+class RaceTransactionCommand:
+    async def call(self, message, state):
         chosen_race = message.content
         races = state.connection.get_query("SELECT natural_id, display_name FROM race")
-        self.select_race(message, chosen_race, races, transactor)
+
+        for race in races:
+            if race[1].lower() == chosen_race:
+                commit_character(message, race[0], state.transactor) 
+                return

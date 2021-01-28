@@ -1,6 +1,3 @@
-import sqlite3
-from sqlite3 import Error
-from data.connection import DbConnection
 from data.seed.races import create_races
 
 def create_tables (connection):

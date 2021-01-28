@@ -1,9 +1,5 @@
-class TransactionCommandInterface:
-    async def call(self, message, state, transactor):
-        pass
-
 class Transaction:
-    def __init__(self, function: TransactionCommandInterface, state):
+    def __init__(self, function, state):
         self.function = function
         self.state = state
 
