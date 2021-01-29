@@ -6,11 +6,11 @@ class Schema:
 
     def create(self):
         print('Preparing schema...')
-        self.create_tables()
-        self.populate_rows()
+        self.__create_tables()
+        self.__populate_rows()
         print('Schema ready')
 
-    def create_tables (self):
+    def __create_tables (self):
         self.connection.execute_query(create_world_type_table)
         self.connection.execute_query(create_world_table)
         self.connection.execute_query(create_room_table)
@@ -25,7 +25,7 @@ class Schema:
         self.connection.execute_query(create_race_table)
         self.connection.execute_query(create_character_table)
 
-    def populate_rows(self):
+    def __populate_rows(self):
         Races(self.connection).create()
 
 create_world_type_table = """

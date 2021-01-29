@@ -16,14 +16,14 @@ class Interpreter:
         else:
             raw = message.content
             if raw.startswith(self.prefix):
-                await self.handle_command(raw, message)
+                await self.__handle_command(raw, message)
 
-    async def handle_command(self, raw, message):
-        command = self.clean(raw)
+    async def __handle_command(self, raw, message):
+        command = self.__clean(raw)
         if command[0].lower() in ['character', 'char', 'ch']:
             await self.character_module.handle_command(command, message)
             
-    def clean(self, raw):
+    def __clean(self, raw):
         no_prefix = raw.replace(self.prefix, '')
         command = no_prefix.split()
         return command
