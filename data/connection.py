@@ -5,12 +5,12 @@ class DbConnection:
     def __init__(self, path):
         self.connection = None
         try:
-            print(f'Connecting to DB: {path}...')
+            print(f"Connecting to DB: {path}...")
             self.connection = sqlite3.connect(path)
-            print(f'Connection to DB: {path} established')
+            print(f"Connection to DB: {path} established")
 
         except Error as e:
-            print(f'DB setup error: {e}')
+            print(f"DB setup error: {e}")
             raise e
 
     def execute_query(self, query):

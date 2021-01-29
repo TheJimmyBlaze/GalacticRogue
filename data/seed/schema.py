@@ -1,14 +1,15 @@
 from data.seed.races import Races
+from data.seed.backgrounds import Backgrounds
 
 class Schema:
     def __init__(self, connection):
         self.connection = connection
 
     def create(self):
-        print('Preparing schema...')
+        print("Preparing schema...")
         self.__create_tables()
         self.__populate_rows()
-        print('Schema ready')
+        print("Schema ready")
 
     def __create_tables (self):
         self.connection.execute_query(create_world_type_table)
@@ -23,10 +24,12 @@ class Schema:
         self.connection.execute_query(create_furnishing_table)
         self.connection.execute_query(create_door_table)
         self.connection.execute_query(create_race_table)
+        self.connection.execute_query(create_background_table)
         self.connection.execute_query(create_character_table)
 
     def __populate_rows(self):
         Races(self.connection).create()
+        Backgrounds(self.connection).create()
 
 create_world_type_table = """
 CREATE TABLE IF NOT EXISTS world_type (
@@ -142,7 +145,17 @@ create_race_table = """
 CREATE TABLE IF NOT EXISTS race (
     natural_id TEXT PRIMARY KEY,
     display_name TEXT NOT NULL UNIQUE,
-    description TEXT NOT NULL
+    description TEXT NOT NULL,
+    observation TEXT NOT NULL
+);
+"""
+
+create_background_table = """
+CREATE TABLE IF NOT EXISTS background (
+    natural_id TEXT PRIMARY KEY,
+    display_name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    observation TEXT NOT NULL
 );
 """
 
@@ -150,12 +163,14 @@ create_character_table = """
 CREATE TABLE IF NOT EXISTS character (
     identity_id INTEGER PRIMARY KEY AUTOINCREMENT,
     race_id TEXT NOT NULL,
-    room_id TEXT NOT NULL,
-    container_id TEXT NOT NULL,
+    background_id TEXT NOT NULL,
+    room_id TEXT NULL,
+    container_id TEXT NULL,
     discord_id TEXT NOT NULL UNIQUE,
     display_name TEXT NOT NULL UNIQUE,
 
     FOREIGN KEY (race_id) REFERENCES race (natural_id),
+    FOREIGN KEY (background_id) REFERENCES background (natural_id),
     FOREIGN KEY (room_id) REFERENCES room (natural_id),
     FOREIGN KEY (container_id) REFERENCES container (identity_id)
 );

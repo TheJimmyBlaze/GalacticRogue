@@ -1,3 +1,6 @@
+class DefaultState:
+    pass
+
 class Transaction:
     def __init__(self, function, state):
         self.function = function
@@ -6,7 +9,7 @@ class Transaction:
 class Transactor:
     def __init__(self):
         self.transactions = {}
-        print('Transactor initialized')
+        print("Transactor initialized")
 
     def clear_transaction(self, discord_id):
         del self.transactions[discord_id] 
