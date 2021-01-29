@@ -1,31 +1,51 @@
 import sys
 import discord
-from data.database import create_connection 
-from command.interpreter import interpret
+from command.interpreter import Interpreter
+from data.connection import DbConnection
 from command.transactor import Transactor
+from data.seed.schema import Schema
 
-client = discord.Client()
+discord_client = discord.Client()
+
+db_path = 'galactic_rogue.sqlite'
 db_connection = None
 
-transactor = Transactor()
+transactor = None
 
-@client.event
+command_prefix = '.'
+interpreter = None
+
+@discord_client.event
 async def on_ready():
-    print('Logged in as {0.user}'.format(client))
+    print('Logged in as {0.user}'.format(discord_client))
 
-    global db_connection
-    db_connection = create_connection()
+    try:
+        global db_connection
+        db_connection = DbConnection(db_path)
+        Schema(db_connection).create()
 
-    if db_connection is None:
-        print('An error occured during startup, Galactic Rogue did not start')
+        global transactor
+        transactor = Transactor()
+
+        global interpreter
+        interpreter = Interpreter(command_prefix, db_connection, transactor)
+
+    except:
+        print('An critical error occured during startup, Galactic Rogue could not start')
         sys.exit()
 
-    print('Galactic Rogue is ready to go!')
+    print('The Rogue is Ready!\n')
 
-@client.event
+@discord_client.event
 async def on_message(message):
-    await interpret(message, db_connection, transactor)
+    try:
+        await interpreter.interpret(message)
 
+    except:
+        print(f'A critiical error occured reading the message: {message.content}')
+        sys.exit()
+
+# Read the token and start the server
 with open('token.txt', 'r') as file:
     token = file.read().replace('\n', '')
-    client.run(token)
+    discord_client.run(token)

@@ -1,26 +1,32 @@
-from data.seed.races import create_races
+from data.seed.races import Races
 
-def create_tables (connection):
-    connection.execute_query(create_world_type_table)
-    connection.execute_query(create_world_table)
-    connection.execute_query(create_room_table)
-    connection.execute_query(create_item_type_table)
-    connection.execute_query(create_item_size_table)
-    connection.execute_query(create_item_table)
-    connection.execute_query(create_container_table)
-    connection.execute_query(create_inventory_table)
-    connection.execute_query(create_furniture_table)
-    connection.execute_query(create_furnishing_table)
-    connection.execute_query(create_door_table)
-    connection.execute_query(create_race_table)
-    connection.execute_query(create_character_table)
+class Schema:
+    def __init__(self, connection):
+        self.connection = connection
 
-def populate_rows(connection):
-    create_races(connection)
+    def create(self):
+        print('Preparing schema...')
+        self.create_tables()
+        self.populate_rows()
+        print('Schema ready')
 
-def setup(connection):
-    create_tables(connection)
-    populate_rows(connection)
+    def create_tables (self):
+        self.connection.execute_query(create_world_type_table)
+        self.connection.execute_query(create_world_table)
+        self.connection.execute_query(create_room_table)
+        self.connection.execute_query(create_item_type_table)
+        self.connection.execute_query(create_item_size_table)
+        self.connection.execute_query(create_item_table)
+        self.connection.execute_query(create_container_table)
+        self.connection.execute_query(create_inventory_table)
+        self.connection.execute_query(create_furniture_table)
+        self.connection.execute_query(create_furnishing_table)
+        self.connection.execute_query(create_door_table)
+        self.connection.execute_query(create_race_table)
+        self.connection.execute_query(create_character_table)
+
+    def populate_rows(self):
+        Races(self.connection).create()
 
 create_world_type_table = """
 CREATE TABLE IF NOT EXISTS world_type (

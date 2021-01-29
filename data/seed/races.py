@@ -1,6 +1,10 @@
-def create_races(connection):
-    connection.execute_query(create_human_race)
-    connection.execute_query(create_twilek_race)
+class Races:
+    def __init__(self, connection):
+        self.connection = connection
+    
+    def create(self):
+        self.connection.execute_query(create_human_race)
+        self.connection.execute_query(create_twilek_race)
 
 create_human_race = """
 INSERT INTO race (

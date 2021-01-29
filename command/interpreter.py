@@ -1,22 +1,29 @@
-from module.character.commands import handle_character
+from module.character import CharacterModule
 
-command_prefix = '.'
+class Interpreter:
+    def __init__(self, prefix, connection, transactor):
+        self.prefix = prefix
+        self.transactor = transactor
 
-def clean(raw):
-    no_prefix = raw.replace(command_prefix, '')
-    command = no_prefix.split()
-    return command
+        self.character_module = CharacterModule(connection, transactor)
+        
+        print('Interpreter initiialized')
 
-async def interpret(message, connection, transactor):
-    transaction = transactor.find_transaction(message.author)
-    if transaction is not None:
-        await transaction.function.call(message, transaction.state)
-    else:
-        raw = message.content
-        if raw.startswith(command_prefix):
-            await handle_command(raw, message, connection, transactor)
+    async def interpret(self, message):
+        transaction = self.transactor.find_transaction(message.author)
+        if transaction is not None:
+            await transaction.function(message, transaction.state)
+        else:
+            raw = message.content
+            if raw.startswith(self.prefix):
+                await self.handle_command(raw, message)
 
-async def handle_command(raw, message, connection, transactor):
-    command = clean(raw)
-    if command[0].lower() in ['character', 'char', 'ch']:
-        await handle_character(command, message, connection, transactor)
+    async def handle_command(self, raw, message):
+        command = self.clean(raw)
+        if command[0].lower() in ['character', 'char', 'ch']:
+            await self.character_module.handle_command(command, message)
+            
+    def clean(self, raw):
+        no_prefix = raw.replace(self.prefix, '')
+        command = no_prefix.split()
+        return command

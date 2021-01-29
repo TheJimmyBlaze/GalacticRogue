@@ -6,6 +6,7 @@ class Transaction:
 class Transactor:
     def __init__(self):
         self.transactions = {}
+        print('Transactor initialized')
 
     def clear_transaction(self, discord_id):
         del self.transactions[discord_id] 
