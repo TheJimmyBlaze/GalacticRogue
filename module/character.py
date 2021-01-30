@@ -2,6 +2,8 @@ import re
 from command.transactor import Transaction
 from command.transactor import DefaultState
 
+create_character_transaction = "Create Character"
+
 class CharacterModule:
     def __init__(self, connection, transactor):
         self.connection = connection
@@ -10,12 +12,9 @@ class CharacterModule:
     async def handle_command(self, command, message):
         if (command[0].lower() in ["character", "char"]):
             if command[1].lower() == "create":
-                await self.create_new(message)
+                await self.__prompt_race(message)
                 return True
         return False
-
-    async def create_new(self, message):
-        await self.__prompt_race(message)
 
     async def __prompt_race(self, message):
         races = self.connection.get_query("SELECT display_name, description FROM race")
@@ -26,7 +25,7 @@ class CharacterModule:
         
         prompt = "> Ahh a new traveller, tell me about yourself.\n> Which race do you belong to?\n{}".format(race_list)
 
-        transaction = Transaction(self.__prompt_background, DefaultState())
+        transaction = Transaction(create_character_transaction, self.__prompt_background, DefaultState())
         self.transactor.add_transaction(message.author.id, transaction)
 
         await message.channel.send(prompt)
@@ -47,7 +46,7 @@ class CharacterModule:
 
                 state.race_id = race[0]
                 state.race_name = race[1]
-                transaction = Transaction(self.__prompt_name, state)
+                transaction = Transaction(create_character_transaction, self.__prompt_name, state)
                 self.transactor.add_transaction(message.author.id, transaction)
 
                 await message.channel.send(prompt)
@@ -63,7 +62,7 @@ class CharacterModule:
 
                 state.background_id = background[0]
                 state.background_name = background[1]
-                transaction = Transaction(self.__commit_character_create, state)
+                transaction = Transaction(create_character_transaction, self.__commit_character_create, state)
                 self.transactor.add_transaction(message.author.id, transaction)
 
                 await message.channel.send(prompt)
@@ -83,7 +82,7 @@ class CharacterModule:
                 background_id,
                 discord_id,
                 display_name
-            ) VALUES (
+            ) VALUES ( 
                 "{}",
                 "{}",
                 "{}",

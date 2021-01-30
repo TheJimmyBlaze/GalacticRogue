@@ -13,6 +13,7 @@ db_connection = None
 transactor = None
 
 command_prefix = "."
+command_timeout = 30 # Seconds
 interpreter = None
 
 @discord_client.event
@@ -28,7 +29,7 @@ async def on_ready():
         transactor = Transactor()
 
         global interpreter
-        interpreter = Interpreter(command_prefix, db_connection, transactor)
+        interpreter = Interpreter(command_prefix, command_timeout, db_connection, transactor)
 
     except:
         print("An critical error occured during startup, Galactic Rogue could not start")
