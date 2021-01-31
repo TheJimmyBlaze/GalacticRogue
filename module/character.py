@@ -10,11 +10,19 @@ class CharacterModule:
         self.transactor = transactor
 
     async def handle_command(self, command, message):
-        if (command[0].lower() in ["character", "char"]):
+        if (command[0].lower() in ["character", "char", "ch"]):
             if command[1].lower() == "create":
-                await self.__prompt_race(message)
+                await self.__create_character(message) 
                 return True
         return False
+
+    async def __create_character(self, message):
+        existing_character = self.connection.get_query("SELECT display_name FROM character WHERE discord_id = ?", [message.author.id])[0][0]
+        if existing_character:
+            await message.channel.send("> You've been here before. I remember you as {}.".format(existing_character))
+            return
+
+        await self.__prompt_race(message)
 
     async def __prompt_race(self, message):
         races = self.connection.get_query("SELECT display_name, description FROM race")
@@ -83,13 +91,13 @@ class CharacterModule:
                 discord_id,
                 display_name
             ) VALUES ( 
-                "{}",
-                "{}",
-                "{}",
-                "{}"
+                ?,
+                ?,
+                ?,
+                ?
             );
-            """.format(state.race_id, state.background_id, message.author.id, name)
-            self.connection.execute_query(query)
+            """
+            self.connection.execute_query(query, [state.race_id, state.background_id, message.author.id, name])
 
             prompt = "> Welcome {}, it's not every day you see a {} {}".format(name, state.race_name, state.background_name)
             await message.channel.send(prompt)

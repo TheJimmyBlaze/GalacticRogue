@@ -1,3 +1,6 @@
+from data.seed.worlds import Worlds
+from data.seed.locations import Locations
+from data.seed.rooms import Rooms
 from data.seed.races import Races
 from data.seed.backgrounds import Backgrounds
 
@@ -14,6 +17,8 @@ class Schema:
     def __create_tables (self):
         self.connection.execute_query(create_world_type_table)
         self.connection.execute_query(create_world_table)
+        self.connection.execute_query(create_location_type_table)
+        self.connection.execute_query(create_location_table)
         self.connection.execute_query(create_room_table)
         self.connection.execute_query(create_item_type_table)
         self.connection.execute_query(create_item_size_table)
@@ -28,6 +33,9 @@ class Schema:
         self.connection.execute_query(create_character_table)
 
     def __populate_rows(self):
+        Worlds(self.connection).create()
+        Locations(self.connection).create()
+        Rooms(self.connection).create()
         Races(self.connection).create()
         Backgrounds(self.connection).create()
 
@@ -41,21 +49,41 @@ CREATE TABLE IF NOT EXISTS world_type (
 create_world_table = """
 CREATE TABLE IF NOT EXISTS world (
     natural_id TEXT PRIMARY KEY,
-    display_name TEXT NOT NULL UNIQUE,
     type_id TEXT NOT NULL,
+    display_name TEXT NOT NULL UNIQUE,
 
     FOREIGN KEY (type_id) REFERENCES world_type (natural_id)
+);
+"""
+
+create_location_type_table = """
+CREATE TABLE IF NOT EXISTS location_type (
+    natural_id TEXT PRIMARY KEY,
+    display_name TEXT NOT NULL UNIQUE
+);
+"""
+
+create_location_table = """
+CREATE TABLE IF NOT EXISTS location (
+    natural_id TEXT PRIMARY KEY,
+    type_id TEXT NOT NULL,
+    world_id TEXT NOT NULL,
+    display_name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL UNIQUE,
+
+    FOREIGN KEY (type_id) REFERENCES location_type (natural_id),
+    FOREIGN KEY (world_id) REFERENCES world (natural_id)
 );
 """
 
 create_room_table = """
 CREATE TABLE IF NOT EXISTS room (
     natural_id TEXT PRIMARY KEY,
-    world_id TEXT NOT NULL,
+    location_id TEXT NOT NULL,
     display_name TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL,
 
-    FOREIGN KEY (world_id) REFERENCES world (natural_id)
+    FOREIGN KEY (location_id) REFERENCES location (natural_id)
 );
 """
 

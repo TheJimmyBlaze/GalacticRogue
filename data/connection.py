@@ -13,22 +13,22 @@ class DbConnection:
             print(f"DB setup error: {e}")
             raise e
 
-    def execute_query(self, query):
+    def execute_query(self, query, args = []):
         cursor = self.connection.cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(query, args)
             self.connection.commit()
         except Error as e:
-            print(f"DB execution error: {e}, in query: {query}")
+            print(f"DB execution error: {e}, in query: {query}, args: {args}")
             raise e
 
-    def get_query(self, query):
+    def get_query(self, query, args = []):
         cursor = self.connection.cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(query, args)
             rows = cursor.fetchall()
             return rows
         except Error as e:
-            print(f"DB query error: {e}, in query: {query}")
+            print(f"DB query error: {e}, in query: {query}, args: {args}")
             raise e
             
